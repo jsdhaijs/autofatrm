@@ -1,0 +1,2 @@
+# autofatrm
+autofarming
