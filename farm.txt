@@ -185,8 +185,8 @@ do
         local function __modImpl()
             local Env = getgenv()
 
-            if Env.SymbolDogShit then
-                Env.SymbolDogShit.Utility.unload()
+            if Env.trapDogShit then
+                Env.trapDogShit.Utility.unload()
             end
 
             local Players = game:GetService('Players')
@@ -231,7 +231,7 @@ do
             local Loaded = false
             local Acceleration = Vector3.new(0, -Workspace.Gravity, 0)
 
-            Env.SymbolDogShit = {}
+            Env.trapDogShit = {}
 
             local BinLib = {
                 methods = {
@@ -287,9 +287,9 @@ do
                 end
             end
 
-            Env.SymbolDogShit.BinLib = BinLib
+            Env.trapDogShit.BinLib = BinLib
             Bin = BinLib.bin()
-            Env.SymbolDogShit.Bin = Bin
+            Env.trapDogShit.Bin = Bin
 
             local Utility = {}
 
@@ -297,7 +297,7 @@ do
                 function Utility.unload()
                     Bin:destroy()
 
-                    Env.SymbolDogShit = nil
+                    Env.trapDogShit = nil
                 end
                 function Utility.Connect(connection)
                     Bin:add(connection)
@@ -384,7 +384,7 @@ do
                 Utility.Signal = Utility.Connect
             end
 
-            Env.SymbolDogShit.Utility = Utility
+            Env.trapDogShit.Utility = Utility
 
             local Games = {
                 Data = {
@@ -468,7 +468,7 @@ do
 
             local Game = Games.GetGame()
             local GameName = Game and Game.Name or ''
-            local Folder = 'SymbolDogShit'
+            local Folder = 'trap'
 
             makefolder(Folder)
 
@@ -504,7 +504,7 @@ do
                 end,
             }
 
-            Env.SymbolDogShit.Folders = Folders
+            Env.trapDogShit.Folders = Folders
 
             task.spawn(function()
                 local soundsPath = Folders.GetPath('Sounds')
@@ -629,7 +629,7 @@ do
                 end
             end
 
-            Env.SymbolDogShit.Fonts = Fonts
+            Env.trapDogShit.Fonts = Fonts
 
             local Images = {
                 URL = 
@@ -667,7 +667,7 @@ do
                 end
             end
 
-            Env.SymbolDogShit.Images = Images
+            Env.trapDogShit.Images = Images
 
             local AssetLoader = {
                 URL = 'https://raw.githubusercontent.com/GhoulSER/env/main/',
@@ -783,7 +783,7 @@ do
                 AssetLoader:LoadAll()
             end
 
-            Env.SymbolDogShit.AssetLoader = AssetLoader
+            Env.trapDogShit.AssetLoader = AssetLoader
 
             local Library = {
                 TweenSpeed = 0.2,
@@ -5926,7 +5926,7 @@ do
                 function Library.Watermark(cfg)
                     cfg = cfg or {}
                     cfg = Library.Config(cfg, {
-                        text = 'SymbolDogShit | {game} | {time} | {date}',
+                        text = 'trapDogShit | {game} | {time} | {date}',
                         visible = true,
                         rate = 1.6666666666666665E-2,
                     })
@@ -6099,7 +6099,7 @@ do
 
                 Utility.Signal(RunService.RenderStepped:Connect(Library.HandleNotifications))
 
-                local XOR_PASSWORD = '32visionSymbol'
+                local XOR_PASSWORD = '32visiontrap'
 
                 local function xorEncrypt(data, password)
                     local encrypted = ''
@@ -6425,7 +6425,7 @@ do
                 end
             end
 
-            Env.SymbolDogShit.Debugging = Debugging
+            Env.trapDogShit.Debugging = Debugging
 
             local Signal = {}
 
@@ -6497,7 +6497,7 @@ do
                 Signal.Disconnect = Signal.Destroy
             end
 
-            Env.SymbolDogShit.Signal = Signal
+            Env.trapDogShit.Signal = Signal
 
             local PlayerInfo = {Info = {}}
 
@@ -6598,7 +6598,7 @@ do
                 end))
             end
 
-            Env.SymbolDogShit.PlayerInfo = PlayerInfo
+            Env.trapDogShit.PlayerInfo = PlayerInfo
 
             local LocalPlayerData
 
@@ -11241,7 +11241,7 @@ do
                 end
 
                 local function getCustomFont(fontName)
-                    local fontsData = getgenv().SymbolDogShit and getgenv().SymbolDogShit.Fonts
+                    local fontsData = getgenv().trapDogShit and getgenv().trapDogShit.Fonts
 
                     if fontsData and fontsData.Get then
                         return fontsData.Get(fontName)
@@ -14989,7 +14989,7 @@ do
                                 for _, face in ipairs(faces)do
                                     local tex = Instance.new('Texture')
 
-                                    tex.Name = 'SymbolTex'
+                                    tex.Name = 'trapTex'
                                     tex.ZIndex = 2147483647
                                     tex.Texture = 'rbxassetid://' .. texId
                                     tex.Face = face
@@ -15008,7 +15008,7 @@ do
                 end
                 local function removeTextures()
                     for _, obj in ipairs(ws:GetDescendants())do
-                        if obj:IsA('Texture') and obj.Name == 'SymbolTex' then
+                        if obj:IsA('Texture') and obj.Name == 'trapTex' then
                             obj:Destroy()
                         end
                     end
@@ -15067,7 +15067,7 @@ do
                 }
                 local tracerContainer = Instance.new('Folder')
 
-                tracerContainer.Name = 'SymbolTracers'
+                tracerContainer.Name = 'trapTracers'
                 tracerContainer.Parent = ws
 
                 local bulletRaysPath = ws:FindFirstChild('Ignored')
@@ -15539,12 +15539,12 @@ do
 
                 local function getSoundsFolder()
                     if not soundsFolder then
-                        local symbolData = getgenv().SymbolDogShit
+                        local trapData = getgenv().trapDogShit
 
-                        if symbolData and symbolData.Folders and type(symbolData.Folders.GetPath) == 'function' then
-                            soundsFolder = symbolData.Folders.GetPath('Sounds')
+                        if trapData and trapData.Folders and type(trapData.Folders.GetPath) == 'function' then
+                            soundsFolder = trapData.Folders.GetPath('Sounds')
                         else
-                            soundsFolder = 'SymbolDogShit\\Sounds'
+                            soundsFolder = 'trapDogShit\\Sounds'
                         end
                     end
 
@@ -16773,10 +16773,10 @@ do
                 local outlineColor = Color3.fromRGB(0, 0, 0)
 
                 local function getMinecraftiaFont()
-                    local symbolData = getgenv().SymbolDogShit
+                    local trapData = getgenv().trapDogShit
 
-                    if symbolData and symbolData.Fonts and symbolData.Fonts.Data then
-                        return symbolData.Fonts.Data['Minecraftia'] or symbolData.Fonts.Data['SmallestPixel7']
+                    if trapData and trapData.Fonts and trapData.Fonts.Data then
+                        return trapData.Fonts.Data['Minecraftia'] or trapData.Fonts.Data['SmallestPixel7']
                     end
 
                     return nil
@@ -16883,7 +16883,7 @@ do
                     indicatorLabel.Position = UDim2.new(0.5, 0, 0, 0)
                     indicatorLabel.Size = UDim2.new(1, 0, 1, 0)
                     indicatorLabel.AnchorPoint = Vector2.new(0.5, 0)
-                    indicatorLabel.Text = 'symbol'
+                    indicatorLabel.Text = 'trap'
                     indicatorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                     indicatorLabel.TextSize = 13
                     indicatorLabel.TextStrokeTransparency = 0.1
@@ -18762,12 +18762,12 @@ local esp = __M._()({
     highlight = highlight,
     chams = chams,
     boxes3d = boxes3d,
-    assetLoader = getgenv().SymbolDogShit.AssetLoader,
+    assetLoader = getgenv().trapDogShit.AssetLoader,
 })
 local http, lp, lighting, tps, rnd = v.http, v.lp, v.lighting, v.tps, v.rnd
 
 local function getAssetsFileList()
-    local assetLoader = getgenv().SymbolDogShit.AssetLoader
+    local assetLoader = getgenv().trapDogShit.AssetLoader
 
     if not assetLoader or not assetLoader.AssetsFolder then
         return {}
@@ -18792,7 +18792,7 @@ pcall(function()
 end)
 
 local win = lib:Window({
-    name = 'symbol',
+    name = 'trap',
     size = UDim2.fromOffset(750, 599),
     open = true,
     fontsize = 20,
@@ -21213,7 +21213,7 @@ do
 
     local function getLoadedFonts()
         local fonts = {}
-        local fontsFolder = 'SymbolDogShit\\FontsFolder'
+        local fontsFolder = 'trapDogShit\\FontsFolder'
 
         if isfolder(fontsFolder) then
             for _, f in pairs(listfiles(fontsFolder))do
@@ -21780,7 +21780,7 @@ do
 
     spoof_popup:Textbox({
         name = 'server region',
-        value = 'Symbol',
+        value = 'trap',
         placeholder = 'Enter server region...',
         callback = function(v)
             lib.Flags.hudchanger_server_name = v
@@ -23748,7 +23748,7 @@ loopManager:AddHeartbeat('world_visuals', function()
 end)
 
 local watermarkObj = lib.Watermark({
-    text = 'symbol | {fps}',
+    text = 'trap | {fps}',
     visible = false,
     rate = 0.2,
 })
@@ -23784,7 +23784,7 @@ do
         flag = 'config_name',
     })
 
-    local cfgPath = 'SymbolDogShit\\Configs'
+    local cfgPath = 'trapDogShit\\Configs'
 
     local function getCfgList()
         local cfg = {}
@@ -23908,7 +23908,7 @@ do
     local watermarkPopup = watermarkToggle:Popup({size = 200})
 
     local function updateWatermark()
-        local text = 'symbol'
+        local text = 'trap'
         local types = lib.Flags.watermark_types
 
         if types and #types > 0 then
@@ -24071,7 +24071,7 @@ pcall(function()
 end)
 lib.Notification({
     name = '32jew',
-    description = 'hello, symbol is loaded',
+    description = 'hello, trap is loaded',
     type = 'Time',
     time = 5,
 })
