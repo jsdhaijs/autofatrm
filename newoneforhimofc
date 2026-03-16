@@ -1,0 +1,216 @@
+--[[ Dementia Enjoyer - 03/16 ]]
+
+-- Imports
+local BetterDrawing = loadstring( game : HttpGet( "https://raw.githubusercontent.com/dementiaenjoyer/Better-Drawing/refs/heads/main/Main.lua") )( );
+local Macros = loadstring( game : HttpGet( "https://raw.githubusercontent.com/Stefanuk12/macrosdk/refs/heads/main/luraphsdk.lua" ) )( );
+
+-- Cache
+local GetStack = debug.getstack;
+local SetStack = debug.setstack;
+
+local DrawingNew = Drawing.new;
+local TableClone = table.clone;
+local Color3New = Color3.new;
+
+local Round = math.round;
+local Radians = math.rad;
+local Tangent = math.tan;
+
+local Vector2Zero = Vector2.zero;
+local Vector2New = Vector2.new;
+
+local White = Color3New( 1, 1, 1 );
+local Black = Color3New( 0, 0, 0 );
+
+-- Services
+local Service = setmetatable( { }, { __index = function( Self, Index )
+    return cloneref( game.GetService( game, Index ) );
+end } );
+
+local Workspace = Service.Workspace;
+local Players = Service.Players;
+
+-- Variables
+local CurrentCamera = Workspace.CurrentCamera;
+local LocalPlayer = Players.LocalPlayer;
+
+local Environment = getrenv( );
+
+local Shared = Environment.shared;
+local Require = Shared.require;
+
+-- Dynamics
+local Center = Vector2Zero;
+
+-- Modules
+local PlayerSettingsInterface = Require( "PlayerSettingsInterface" );
+local ReplicationInterface = Require( "ReplicationInterface" );
+
+-- Classes
+local PlayerObject = { Entry = nil }; do
+    function PlayerObject : Initiate( Player )
+        local ReplicationObject = ReplicationInterface.getEntry( Player );
+
+        local ClassObject = TableClone( PlayerObject );
+        ClassObject.Entry = ReplicationObject;
+
+        return ClassObject;
+    end
+
+    function PlayerObject : Character( )
+        local ReplicationObject, Result = self.Entry, { };
+
+        if ( ReplicationObject ) then
+            local ThirdPersonObject = ReplicationObject : getThirdPersonObject( );
+
+            if ( not ThirdPersonObject ) then
+                return Result;
+            end
+
+            Result = ThirdPersonObject : getCharacterHash( );
+        end
+
+        return Result;
+    end
+
+    PlayerObject = setmetatable( PlayerObject, { __call = function( Self, Player )
+        local ReplicationObject = ReplicationInterface.getEntry( Player );
+
+        local ClassObject = TableClone( PlayerObject );
+        ClassObject.Entry = ReplicationObject;
+
+        return ClassObject;
+    end });
+end
+
+-- Functions
+local Entities = { Closest = { }, Cache = { }, Stamp = 0 }; do
+    function Entities:Get( )
+        local Objects, Stamp = { }, tick( );
+
+        if ( ( Stamp - Entities.Stamp ) < 2 ) and Stamp > 0 then
+            return self.Cache;
+        end
+
+        for _, Player in Players : GetPlayers( ) do
+            if ( Player.TeamColor == LocalPlayer.TeamColor ) then
+                continue;
+            end
+
+            Objects[ Player ] = PlayerObject( Player );
+        end
+
+        self.Cache = Objects;
+        self.Stamp = Stamp;
+        
+        return Objects;
+    end
+
+    function Entities:GetClosest( Range )
+        local Closest, ClosestDistance = { }, Range;
+
+        for _, Player in self : Get( ) do
+            local Character = Player : Character( );
+            local Torso = Character.Torso;
+
+            if ( not Torso ) then
+                continue;
+            end
+
+            local ScreenPosition, OnScreen = CurrentCamera : WorldToViewportPoint( Torso.Position );
+
+            if ( not OnScreen ) then
+                continue;
+            end
+
+            local Distance = ( Center - Vector2New( ScreenPosition.X, ScreenPosition.Y ) ).Magnitude;
+
+            if ( Distance <= ClosestDistance ) then
+                Closest, ClosestDistance = Character, Distance;
+            end
+        end
+
+        return Closest;
+    end
+end
+
+-- Main
+do
+    local function Stepper( DeltaTime )
+        local ViewportSize = CurrentCamera.ViewportSize;
+        local FieldOfView = CurrentCamera.FieldOfView;
+
+        Entities.Closest = Entities : GetClosest( 300 );
+        Center = ( ViewportSize * 0.5 );
+
+        for _, Player in Entities : Get( ) do
+            local Character = Player : Character( );
+            local Torso = Character.Torso;
+
+            if ( not Torso ) then
+                continue;
+            end
+
+            local ScreenPosition, OnScreen = CurrentCamera : WorldToViewportPoint( Torso.Position );
+
+            if ( not OnScreen ) then
+                continue;
+            end
+
+            local Scale = ( 2 * ViewportSize.Y ) / ( ( 2 * ScreenPosition.Z * Tangent( Radians( FieldOfView ) * 0.5 ) ) * 1.5 );
+
+            local Width, Height = Round( 3 * Scale ), Round( 4 * Scale );
+            local Size = Vector2New( Width, Height );
+
+            local Position = Vector2New( Round(ScreenPosition.X - ( Width * 0.5 )), Round( ScreenPosition.Y - ( Height * 0.5 ) ) );
+
+            local Outline = DrawingNew( "Square" );
+            Outline.Visible = true;
+
+            local Box = DrawingNew( "Square" );
+            Box.Visible = true;
+            
+            -- Box
+            do
+                Box.Position = Position;
+                Box.Size = Size;
+
+                Box.Color = White;
+                Box.Thickness = 1;
+            end
+
+            -- Outline
+            do
+                Outline.Position = Box.Position;
+                Outline.Size = Box.Size;
+
+                Outline.Color = Black;
+                Outline.Thickness = 3;
+            end
+        end
+    end
+
+    -- Hooks
+    do
+        local GetValue = nil; GetValue = hookfunction( PlayerSettingsInterface.getValue, LPH_NO_UPVALUES( function( ... )
+            local PreviousResult = GetValue( ... );
+
+            local Character = Entities.Closest;
+            local Head = Character.Head;
+
+            if ( Head ) then
+                for Index, Value in GetStack( 3 ) do
+                    if ( typeof( Value ) ~= "CFrame" ) then
+                        continue;
+                    end
+                    
+                    SetStack( 3, Index, CFrame.new( Value.Position, Head.Position ) );
+                end
+            end
+
+            return PreviousResult;
+        end ) )
+    end
+
+    BetterDrawing : Init( Stepper );
+end
