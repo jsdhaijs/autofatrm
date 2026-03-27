@@ -3,10 +3,7 @@ if not getgenv().Owner or getgenv().Owner == "YOUR_USERNAME_HERE" then
     return
 end
 
-if not LPH_OBFUSCATED then
-    game.Players.LocalPlayer:Kick("nigga why u trying src 😡🖕")
-    return
-end
+
 
 local Exodus = {
     owners = {getgenv().Owner},
